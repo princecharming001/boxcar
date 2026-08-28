@@ -627,9 +627,9 @@
     });
   });
 
-  // waitlist — persisted to Supabase (public.boxcar_waitlist, insert-only via publishable key)
+  // waitlist — persisted to Supabase (public.boxcar_waitlist, insert-only via anon key)
   const SUPABASE_URL = 'https://nxibeiykcgxpbmkeadth.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_0XafzUO0oxkFE1hkKzKqsw_LvnBdMNz';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54aWJlaXlrY2d4cGJta2VhZHRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MjA4MDcsImV4cCI6MjA4MTA5NjgwN30.0ViO1YkTQ2CEVjf1VoBun6cgVodu2u3DrcDipeWnr28';
 
   function handleWaitlist(formId){
     const form = document.getElementById(formId);
