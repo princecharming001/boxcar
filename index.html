@@ -642,13 +642,13 @@
       const submitBtn = form.querySelector('button');
       submitBtn.disabled = true;
 
-      fetch(SUPABASE_URL + '/rest/v1/boxcar_waitlist?on_conflict=email', {
+      fetch(SUPABASE_URL + '/rest/v1/boxcar_waitlist', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'apikey': SUPABASE_KEY,
           'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'Prefer': 'resolution=ignore-duplicates,return=minimal'
+          'Prefer': 'return=minimal'
         },
         body: JSON.stringify({ email, zip_code: zip })
       }).catch(err => console.error('waitlist submit failed', err));
