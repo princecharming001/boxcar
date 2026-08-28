@@ -2,775 +2,605 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BOXCAR — The delivery layer for autonomous cars.</title>
-<meta name="description" content="Boxcar builds the locked, temperature-controlled compartment grid that batches deliveries onto any vehicle — human-driven today, autonomous tomorrow. Private pilot in the Bay Area.">
+<title>BOXCAR — The delivery layer for autonomous cars</title>
+<meta name="description" content="Sixteen locked compartments. One route. Boxcar is the hardware layer that lets any vehicle — driven or driverless — deliver to sixteen people at once.">
 <style>
   :root{
-    --bg:#FAFAF9;
-    --bg-soft:#F4F4F2;
-    --ink:#1B1B1A;
-    --ink-soft:#6E6E6A;
-    --ink-faint:#A8A8A3;
-    --line:#DDDDD8;
-    --btn:#232322;
+    --bg:#0A0A0B;
+    --bg-2:#0E0E10;
+    --ink:#F2F0EB;
+    --ink-2:#8E8C86;
+    --ink-3:#54524E;
+    --line:#1E1E21;
+    --line-2:#2A2A2E;
+    --accent:#E0A44C;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Inter","Helvetica Neue",Arial,sans-serif;
     background:var(--bg);color:var(--ink);
     -webkit-font-smoothing:antialiased;overflow-x:hidden;
+    font-weight:300;
   }
-  ::selection{background:var(--ink);color:var(--bg)}
+  ::selection{background:var(--accent);color:#0A0A0B}
+  a{color:inherit}
 
-  /* ---------- ANNOUNCEMENT ---------- */
-  .announce{
-    position:fixed;top:0;left:0;right:0;z-index:110;
-    text-align:center;padding:9px 16px;
-    background:var(--ink);color:var(--bg);
-    font-size:12.5px;letter-spacing:.18em;font-weight:300;
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+  @media(max-width:700px){.wrap{padding:0 22px}}
+
+  /* ---------- LABELS / TYPE ---------- */
+  .label{
+    font-family:var(--mono);
+    font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:400;
   }
-  .announce b{font-weight:500;letter-spacing:.18em}
+  h2.display{
+    font-size:clamp(30px,4.6vw,54px);
+    font-weight:200;line-height:1.1;letter-spacing:-.015em;
+    max-width:15ch;
+  }
+  .lede{
+    margin-top:26px;max-width:52ch;
+    font-size:clamp(16px,1.45vw,18.5px);line-height:1.72;color:var(--ink-2);
+  }
+  .lede b,.body-copy b{color:var(--ink);font-weight:400}
 
   /* ---------- NAV ---------- */
-  nav{
-    position:fixed;top:34px;left:0;right:0;z-index:100;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:22px 48px;
-    background:rgba(250,250,249,.85);
-    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  .topbar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(10,10,11,.72);
+    backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--line);
   }
-  .nav-logo{
-    display:flex;align-items:center;gap:12px;
-    font-size:17px;font-weight:300;letter-spacing:.42em;
-    text-decoration:none;color:var(--ink);
+  .topbar-in{
+    max-width:1120px;margin:0 auto;padding:0 32px;
+    height:62px;display:flex;align-items:center;justify-content:space-between;gap:24px;
   }
-  .nav-logo svg{width:30px;height:auto}
-  .nav-links{display:flex;gap:32px;list-style:none}
-  .nav-links a{
-    font-size:14.5px;color:var(--ink-soft);text-decoration:none;
-    padding-bottom:3px;border-bottom:1.5px solid transparent;
-    transition:color .2s,border-color .2s;
+  .brand{
+    display:flex;align-items:center;gap:11px;
+    text-decoration:none;font-size:14px;letter-spacing:.34em;font-weight:400;
   }
-  .nav-links a:hover{color:var(--ink);border-color:var(--ink)}
+  .brand-mark{width:22px;height:15px;flex-shrink:0}
+  .navlinks{display:flex;gap:30px;list-style:none}
+  .navlinks a{
+    font-size:13.5px;color:var(--ink-2);text-decoration:none;transition:color .18s;
+  }
+  .navlinks a:hover{color:var(--ink)}
   .btn{
-    display:inline-flex;align-items:center;gap:10px;
-    background:var(--btn);color:#fff;border:none;cursor:pointer;
-    font-size:14.5px;font-family:inherit;
-    padding:13px 22px;text-decoration:none;
-    transition:opacity .2s, transform .2s;
+    display:inline-flex;align-items:center;gap:9px;
+    background:var(--ink);color:#0A0A0B;border:none;cursor:pointer;
+    font-family:inherit;font-size:13.5px;font-weight:450;
+    padding:11px 18px;text-decoration:none;
+    transition:opacity .18s,transform .18s;
   }
-  .btn:hover{opacity:.86;transform:translateY(-1px)}
-  .btn svg{width:15px;height:15px}
+  .btn:hover{opacity:.88}
+  .btn svg{width:13px;height:13px}
+  @media(max-width:860px){
+    .navlinks{display:none}
+    .topbar-in{padding:0 22px}
+  }
 
   /* ---------- HERO ---------- */
   .hero{
-    min-height:100vh;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;padding:150px 24px 60px;position:relative;
+    padding:150px 0 96px;position:relative;overflow:hidden;
   }
-  .pilot-badge{
-    display:inline-flex;align-items:center;gap:9px;
-    border:1px solid var(--line);border-radius:100px;
-    padding:8px 18px;font-size:12.5px;letter-spacing:.22em;
-    color:var(--ink-soft);text-transform:uppercase;
-    animation:fadeUp 1s ease both;
+  .hero::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(760px 420px at 78% 32%, rgba(224,164,76,.07), transparent 68%),
+      radial-gradient(600px 400px at 12% 8%, rgba(255,255,255,.035), transparent 70%);
   }
-  .pilot-badge::before{
-    content:"";width:7px;height:7px;border-radius:50%;
-    background:var(--ink);animation:pulse 2.4s ease-in-out infinite;
+  .hero-in{
+    position:relative;z-index:1;
+    display:grid;grid-template-columns:1.02fr .98fr;gap:72px;align-items:center;
   }
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-  .wordmark{
-    display:flex;align-items:center;gap:28px;margin-top:44px;
-    animation:fadeUp 1s .1s ease both;
+  .status{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink-2);
   }
-  .wordmark h1{
-    font-size:clamp(50px,8.5vw,112px);
-    font-weight:100;letter-spacing:.28em;margin-right:-.28em;line-height:1;
+  .status .dot{
+    width:6px;height:6px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 0 rgba(224,164,76,.5);
+    animation:ping 2.6s ease-out infinite;
   }
-  .wordmark .mark{width:clamp(64px,7vw,96px);flex-shrink:0}
-  .tagline{
-    margin-top:18px;
-    font-size:clamp(12px,1.3vw,16px);
-    letter-spacing:.38em;margin-right:-.38em;
-    color:var(--ink-soft);font-weight:300;
-    animation:fadeUp 1s .2s ease both;
+  @keyframes ping{
+    0%{box-shadow:0 0 0 0 rgba(224,164,76,.45)}
+    70%{box-shadow:0 0 0 9px rgba(224,164,76,0)}
+    100%{box-shadow:0 0 0 0 rgba(224,164,76,0)}
   }
-  .hero-sub{
-    margin-top:52px;max-width:720px;
-    font-size:clamp(19px,2.5vw,27px);
-    line-height:1.5;font-weight:300;color:var(--ink-soft);
-    animation:fadeUp 1s .3s ease both;
+  h1{
+    margin-top:30px;
+    font-size:clamp(38px,5.6vw,68px);
+    font-weight:200;line-height:1.04;letter-spacing:-.025em;
+    max-width:13ch;
   }
-  .hero-sub b{color:var(--ink);font-weight:400}
-  .waitlist{
-    margin-top:52px;display:flex;gap:0;
-    animation:fadeUp 1s .45s ease both;
-    width:min(480px,90vw);
+  h1 em{font-style:normal;color:var(--ink-2)}
+  .hero p.sub{
+    margin-top:28px;max-width:46ch;
+    font-size:clamp(16px,1.5vw,19px);line-height:1.68;color:var(--ink-2);
   }
+  .hero p.sub b{color:var(--ink);font-weight:400}
+
+  /* waitlist form */
+  .waitlist{margin-top:40px;display:flex;max-width:440px;border:1px solid var(--line-2)}
   .waitlist input{
-    flex:1;min-width:0;
-    font-family:inherit;font-size:15.5px;font-weight:300;
-    padding:16px 20px;
-    background:transparent;border:1.5px solid var(--ink);border-right:none;
-    color:var(--ink);outline:none;
+    flex:1;min-width:0;background:transparent;border:none;outline:none;
+    font-family:inherit;font-size:14.5px;font-weight:300;color:var(--ink);
+    padding:15px 16px;
   }
-  .waitlist input[name="zip"]{flex:0 0 108px;text-align:center}
-  .waitlist input::placeholder{color:var(--ink-faint)}
-  .waitlist button{font-size:15.5px;padding:16px 26px;white-space:nowrap}
-  .waitlist-note{
-    margin-top:16px;font-size:13px;color:var(--ink-faint);
-    letter-spacing:.06em;font-weight:300;
-    animation:fadeUp 1s .55s ease both;
+  .waitlist input::placeholder{color:var(--ink-3)}
+  .waitlist input[name="zip"]{
+    flex:0 0 96px;border-left:1px solid var(--line-2);text-align:center;
   }
-  .waitlist-success{
-    margin-top:52px;display:none;flex-direction:column;align-items:center;gap:14px;
-    animation:fadeUp .6s ease both;
+  .waitlist button{
+    padding:15px 20px;font-size:13.5px;white-space:nowrap;
   }
-  .waitlist-success svg{width:44px;height:44px}
-  .waitlist-success p{font-size:17px;font-weight:300;color:var(--ink)}
-  .waitlist-success span{font-size:14px;color:var(--ink-soft);font-weight:300}
-  .trust{
-    margin-top:68px;display:flex;gap:44px;flex-wrap:wrap;justify-content:center;
-    animation:fadeUp 1s .6s ease both;
+  .wl-note{margin-top:14px;font-size:12.5px;color:var(--ink-3);letter-spacing:.01em}
+  .wl-done{
+    margin-top:40px;display:none;align-items:center;gap:13px;
+    padding:17px 20px;border:1px solid var(--line-2);max-width:440px;
+    background:rgba(224,164,76,.05);
   }
-  .trust span{display:flex;align-items:center;gap:9px;font-size:15px;color:var(--ink-soft)}
-  .trust svg{width:17px;height:17px;stroke:var(--ink-soft)}
-  .scroll-hint{
-    position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
-    width:22px;height:36px;border:1.5px solid var(--ink-faint);border-radius:12px;
-    animation:fadeUp 1s .8s ease both;
-  }
-  .scroll-hint::after{
-    content:"";position:absolute;top:7px;left:50%;
-    width:3px;height:7px;background:var(--ink-faint);border-radius:2px;
-    transform:translateX(-50%);
-    animation:scrollDot 1.8s ease-in-out infinite;
-  }
-  @keyframes scrollDot{0%,100%{transform:translate(-50%,0);opacity:1}55%{transform:translate(-50%,10px);opacity:0}}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .wl-done svg{width:19px;height:19px;flex-shrink:0;stroke:var(--accent)}
+  .wl-done div{font-size:14.5px;line-height:1.5}
+  .wl-done span{display:block;font-size:12.5px;color:var(--ink-3);margin-top:3px}
 
-  /* ---------- SECTION SHARED ---------- */
-  section{padding:130px 24px}
-  .section-inner{max-width:1060px;margin:0 auto}
-  .eyebrow{
-    font-size:12.5px;letter-spacing:.5em;text-transform:uppercase;
-    color:var(--ink-faint);text-align:center;font-weight:400;
+  /* ---------- HERO GRID VISUAL ---------- */
+  .rig{position:relative}
+  .rig-frame{
+    border:1px solid var(--line-2);background:var(--bg-2);
+    padding:26px;position:relative;
   }
-  .section-title{
-    margin-top:22px;text-align:center;
-    font-size:clamp(28px,4vw,44px);font-weight:200;letter-spacing:.06em;
+  .rig-head{
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--ink-3);margin-bottom:20px;
   }
-  .section-lede{
-    margin:26px auto 0;max-width:620px;text-align:center;
-    font-size:16.5px;line-height:1.7;font-weight:300;color:var(--ink-soft);
+  .rig-head .live{display:flex;align-items:center;gap:7px;color:var(--accent)}
+  .rig-head .live::before{
+    content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);
+    animation:blink 1.9s ease-in-out infinite;
   }
-  .reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
-  .reveal.in{opacity:1;transform:translateY(0)}
-
-  /* ---------- HOW IT WORKS ---------- */
-  .steps{
-    margin-top:90px;
-    display:grid;grid-template-columns:repeat(3,1fr);gap:64px;position:relative;
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .grid16{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
   }
-  .route-line{
-    position:absolute;top:52px;left:12%;right:12%;height:2px;z-index:0;
-    background-image:linear-gradient(to right,var(--line) 55%,transparent 45%);
-    background-size:14px 2px;
-  }
-  .route-car{position:absolute;top:32px;left:10%;width:52px;z-index:1}
-  .step{position:relative;z-index:2;text-align:center}
-  .step-icon{
-    width:104px;height:104px;margin:0 auto;
-    background:var(--bg);border:1.5px solid var(--line);border-radius:50%;
+  .cell{
+    position:relative;aspect-ratio:1.34/1;
+    border:1px solid var(--line-2);background:#101013;
     display:flex;align-items:center;justify-content:center;
-    transition:border-color .3s;
+    animation:load 7s ease-in-out infinite;
+    animation-delay:calc(var(--i) * .11s);
   }
-  .step:hover .step-icon{border-color:var(--ink)}
-  .step-icon svg{width:46px;height:46px}
-  .step h3{margin-top:30px;font-size:19px;font-weight:400;letter-spacing:.12em}
-  .step p{margin-top:14px;font-size:15.5px;line-height:1.65;color:var(--ink-soft);font-weight:300;max-width:280px;margin-left:auto;margin-right:auto}
-
-  /* ---------- THE HARDWARE ---------- */
-  .car-section{background:var(--bg-soft)}
-  .locker-wrap{margin-top:80px;display:flex;justify-content:center}
-  .locker-svg{width:min(560px,88vw);height:auto}
-  .locker-door{cursor:pointer;transition:fill .25s}
-  .locker-door:hover{fill:var(--ink)}
-  .locker-caption{
-    margin-top:40px;text-align:center;max-width:560px;margin-left:auto;margin-right:auto;
-    font-size:15.5px;color:var(--ink-soft);font-weight:300;letter-spacing:.03em;line-height:1.6;
+  .cell::after{
+    content:"";width:11px;height:1.5px;background:var(--ink-3);
+    transition:background .3s;
   }
-  .locker-caption b{color:var(--ink);font-weight:400}
-
-  .veh-compare{
-    margin-top:56px;display:flex;align-items:center;justify-content:center;gap:36px;
+  @keyframes load{
+    0%,4%{border-color:var(--line-2);background:#101013}
+    9%{border-color:rgba(224,164,76,.55);background:rgba(224,164,76,.07)}
+    26%,100%{border-color:var(--line-2);background:#101013}
   }
-  .veh-item{display:flex;flex-direction:column;align-items:center;gap:12px}
-  .veh-icon{width:64px;height:auto;color:var(--ink-soft)}
-  .veh-label{
-    font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--ink-faint);line-height:1.6;
+  .cell.open{
+    border-color:var(--accent);background:rgba(224,164,76,.1);
+    animation:none;
   }
-  .veh-label b{display:block;font-size:14px;letter-spacing:.02em;text-transform:none;color:var(--ink);font-weight:400;margin-top:2px}
-  .veh-arrow{font-size:22px;color:var(--ink-faint);font-weight:200}
-  .hw-note{
-    margin-top:20px;text-align:center;font-size:13.5px;color:var(--ink-faint);
-    font-weight:300;letter-spacing:.03em;
+  .cell.open::after{
+    width:13px;height:13px;background:none;
+    border:1.5px solid var(--accent);border-radius:2px;
+    border-top-color:transparent;border-right-color:transparent;
+    transform:rotate(-45deg) translateY(-1px);
+  }
+  .rig-foot{
+    margin-top:20px;padding-top:16px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;gap:16px;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);
+  }
+  .rig-foot b{color:var(--ink-2);font-weight:400}
+  .rig-cap{
+    margin-top:18px;font-size:12.5px;color:var(--ink-3);line-height:1.6;
   }
 
-  .hw-grid{
-    margin-top:96px;
-    display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+  @media(max-width:940px){
+    .hero{padding:126px 0 76px}
+    .hero-in{grid-template-columns:1fr;gap:56px}
+    h1{max-width:none}
+    .rig{max-width:460px}
   }
-  .hw-copy p{
-    font-size:16.5px;line-height:1.85;font-weight:300;color:var(--ink-soft);
-  }
-  .hw-copy p + p{margin-top:22px}
-  .hw-copy b{color:var(--ink);font-weight:400}
 
-  /* ---------- ROADMAP ---------- */
-  .roadmap-track{
-    margin-top:90px;position:relative;
-    display:grid;grid-template-columns:repeat(3,1fr);gap:56px;
+  /* ---------- SECTIONS ---------- */
+  section{padding:112px 0;border-top:1px solid var(--line)}
+  .sec-head{display:grid;grid-template-columns:180px 1fr;gap:48px;align-items:start}
+  @media(max-width:860px){
+    section{padding:84px 0}
+    .sec-head{grid-template-columns:1fr;gap:20px}
   }
-  .roadmap-line{
-    position:absolute;top:26px;left:12%;right:12%;height:2px;z-index:0;
-    background-image:linear-gradient(to right,var(--line) 55%,transparent 45%);
-    background-size:14px 2px;
-  }
-  .rm-stage{position:relative;z-index:1;text-align:center}
-  .rm-marker{
-    width:52px;height:52px;margin:0 auto;border-radius:50%;
-    background:var(--bg);border:1.5px solid var(--ink);
-    display:flex;align-items:center;justify-content:center;
-    font-size:17px;font-weight:300;color:var(--ink);
-  }
-  .rm-stage h3{margin-top:26px;font-size:15.5px;font-weight:500;letter-spacing:.1em}
-  .rm-when{
-    display:block;margin-top:8px;font-size:12px;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--ink-faint);
-  }
-  .rm-stage p{margin-top:14px;font-size:15px;line-height:1.65;color:var(--ink-soft);font-weight:300;max-width:280px;margin-left:auto;margin-right:auto}
 
-  .cost-compare{
-    margin-top:88px;display:flex;align-items:center;justify-content:center;gap:40px;
-    flex-wrap:wrap;padding-top:56px;border-top:1px solid var(--line);
-  }
-  .cost-item{text-align:center}
-  .cost-item strong{
-    display:block;font-size:clamp(34px,4vw,48px);font-weight:100;letter-spacing:.02em;
-  }
-  .cost-item span{
-    display:block;margin-top:8px;font-size:13px;color:var(--ink-soft);font-weight:300;
-    letter-spacing:.04em;max-width:180px;
-  }
-  .cost-arrow{font-size:22px;color:var(--ink-faint);font-weight:200}
+  /* gap section */
+  .gap-copy{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:56px;max-width:none}
+  .body-copy{font-size:15.5px;line-height:1.82;color:var(--ink-2)}
+  .body-copy + .body-copy{margin-top:0}
+  @media(max-width:860px){.gap-copy{grid-template-columns:1fr;gap:24px}}
 
-  /* ---------- WHY ---------- */
-  .why-grid{
-    margin-top:80px;
-    display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+  /* ---------- SPEC ROWS ---------- */
+  .specs{margin-top:64px;border-top:1px solid var(--line)}
+  .spec{
+    display:grid;grid-template-columns:56px 1fr 1.25fr;gap:32px;align-items:baseline;
+    padding:30px 0;border-bottom:1px solid var(--line);
+    transition:background .25s;
   }
-  .why-copy p{
-    font-size:17px;line-height:1.8;font-weight:300;color:var(--ink-soft);
+  .spec:hover{background:rgba(255,255,255,.014)}
+  .spec-n{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.1em}
+  .spec-t{font-size:17px;font-weight:400;letter-spacing:-.005em}
+  .spec-d{font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+  @media(max-width:760px){
+    .spec{grid-template-columns:1fr;gap:9px;padding:24px 0}
+    .spec-n{font-size:10.5px}
   }
-  .why-copy p + p{margin-top:24px}
-  .why-copy b{color:var(--ink);font-weight:400}
-  .why-stats{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
-  .why-stat{
-    padding:34px 0;border-bottom:1px solid var(--line);
-    display:flex;align-items:baseline;justify-content:space-between;gap:24px;
+
+  /* ---------- ARC (human -> autonomous) ---------- */
+  .arc{
+    margin-top:56px;display:grid;grid-template-columns:1fr auto 1fr;gap:40px;align-items:stretch;
   }
-  .why-stat strong{
-    font-size:clamp(38px,4.5vw,54px);font-weight:100;letter-spacing:.02em;line-height:1;
+  .arc-card{
+    border:1px solid var(--line-2);padding:32px;background:var(--bg-2);
+    display:flex;flex-direction:column;
   }
-  .why-stat span{
-    font-size:14px;color:var(--ink-soft);font-weight:300;
-    letter-spacing:.08em;text-align:right;max-width:180px;
+  .arc-card.next{border-color:rgba(224,164,76,.3);background:rgba(224,164,76,.035)}
+  .arc-when{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink-3);
+  }
+  .arc-card.next .arc-when{color:var(--accent)}
+  .arc-t{margin-top:16px;font-size:20px;font-weight:300;letter-spacing:-.01em}
+  .arc-p{margin-top:14px;font-size:14.5px;line-height:1.7;color:var(--ink-2);flex:1}
+  .arc-cost{
+    margin-top:26px;padding-top:20px;border-top:1px solid var(--line);
+    display:flex;align-items:baseline;gap:10px;
+  }
+  .arc-cost strong{font-size:34px;font-weight:200;letter-spacing:-.02em}
+  .arc-card.next .arc-cost strong{color:var(--accent)}
+  .arc-cost span{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+  .arc-mid{display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-size:20px;font-weight:200}
+  @media(max-width:860px){
+    .arc{grid-template-columns:1fr;gap:18px}
+    .arc-mid{transform:rotate(90deg);padding:2px 0}
+  }
+  .arc-note{
+    margin-top:34px;font-size:15.5px;line-height:1.75;color:var(--ink-2);max-width:62ch;
+  }
+  .arc-note b{color:var(--ink);font-weight:400}
+
+  /* ---------- NUMBERS ---------- */
+  .nums{
+    margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--line);
+  }
+  .num{padding:44px 32px 44px 0;border-bottom:1px solid var(--line)}
+  .num strong{display:block;font-size:clamp(40px,5vw,60px);font-weight:200;letter-spacing:-.03em;line-height:1}
+  .num span{display:block;margin-top:14px;font-size:13.5px;line-height:1.6;color:var(--ink-2);max-width:24ch}
+  @media(max-width:760px){
+    .nums{grid-template-columns:1fr}
+    .num{padding:30px 0}
   }
 
   /* ---------- CITIES ---------- */
-  .cities{margin-top:80px;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+  .cities{margin-top:44px;border-top:1px solid var(--line)}
   .city{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:34px 8px;border-bottom:1px solid var(--line);
-    transition:padding .25s;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+    padding:26px 0;border-bottom:1px solid var(--line);
+    transition:padding-left .25s,color .25s;
   }
-  .city:hover{padding-left:20px}
-  .city-name{
-    font-size:clamp(24px,3.4vw,38px);font-weight:200;letter-spacing:.14em;
-  }
-  .city-status{
-    font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
-    color:var(--ink-faint);font-weight:400;
-  }
-  .city.first .city-status{color:var(--ink)}
-  .cities-note{
-    margin-top:38px;text-align:center;
-    font-size:14.5px;color:var(--ink-soft);font-weight:300;letter-spacing:.05em;
-  }
-  .cities-note a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+  .city:hover{padding-left:12px}
+  .city-n{font-size:clamp(19px,2.4vw,27px);font-weight:200;letter-spacing:.01em}
+  .city.up .city-n{color:var(--ink)}
+  .city:not(.up) .city-n{color:var(--ink-3)}
+  .city-s{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+  .city.up .city-s{color:var(--accent)}
 
   /* ---------- FAQ ---------- */
-  .faq-list{margin-top:70px;max-width:760px;margin-left:auto;margin-right:auto;border-top:1px solid var(--line)}
+  .faqs{margin-top:20px;border-top:1px solid var(--line)}
   .faq{border-bottom:1px solid var(--line)}
   .faq button{
     width:100%;display:flex;align-items:center;justify-content:space-between;gap:24px;
     background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;
-    padding:28px 4px;font-size:17.5px;font-weight:300;color:var(--ink);letter-spacing:.03em;
+    padding:26px 0;font-size:16.5px;font-weight:300;color:var(--ink);
   }
-  .faq .plus{
-    width:18px;height:18px;position:relative;flex-shrink:0;
+  .faq .pm{width:14px;height:14px;position:relative;flex-shrink:0}
+  .faq .pm::before,.faq .pm::after{
+    content:"";position:absolute;background:var(--ink-2);
+    top:50%;left:0;width:100%;height:1px;transform:translateY(-50%);transition:transform .3s;
   }
-  .faq .plus::before,.faq .plus::after{
-    content:"";position:absolute;background:var(--ink);
-    top:50%;left:0;width:100%;height:1.5px;transform:translateY(-50%);
-    transition:transform .3s;
-  }
-  .faq .plus::after{transform:translateY(-50%) rotate(90deg)}
-  .faq.open .plus::after{transform:translateY(-50%) rotate(0deg)}
-  .faq-a{
-    max-height:0;overflow:hidden;transition:max-height .35s ease;
-  }
-  .faq-a p{
-    padding:0 4px 30px;font-size:15.5px;line-height:1.75;
-    color:var(--ink-soft);font-weight:300;max-width:640px;
-  }
+  .faq .pm::after{transform:translateY(-50%) rotate(90deg)}
+  .faq.open .pm::after{transform:translateY(-50%) rotate(0)}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .faq-a p{padding:0 0 28px;font-size:15px;line-height:1.78;color:var(--ink-2);max-width:66ch}
 
-  /* ---------- FINAL CTA ---------- */
-  .final{padding:150px 24px;text-align:center;background:var(--bg-soft)}
-  .final .wordmark-sm{
-    font-size:clamp(28px,4vw,40px);font-weight:100;
-    letter-spacing:.4em;margin-right:-.4em;
+  /* ---------- CLOSER ---------- */
+  .closer{padding:120px 0 110px;border-top:1px solid var(--line);text-align:center}
+  .closer h2{
+    font-size:clamp(28px,4.2vw,46px);font-weight:200;line-height:1.14;
+    letter-spacing:-.02em;max-width:18ch;margin:0 auto;
   }
-  .final > p{margin-top:26px;font-size:17px;color:var(--ink-soft);font-weight:300}
-  .final .waitlist{margin:44px auto 0;animation:none}
-  .final .waitlist-note{animation:none}
+  .closer .waitlist{margin:38px auto 0}
+  .closer .wl-note{text-align:center}
+  .closer .wl-done{margin:38px auto 0}
 
   footer{
-    border-top:1px solid var(--line);
-    padding:34px 48px;
-    display:flex;justify-content:space-between;align-items:center;
-    font-size:13px;color:var(--ink-faint);letter-spacing:.06em;
+    border-top:1px solid var(--line);padding:30px 0;
+    display:flex;justify-content:space-between;align-items:center;gap:18px;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);
   }
-  footer a{color:var(--ink-faint);text-decoration:none;margin-left:26px}
-  footer a:hover{color:var(--ink)}
+  footer a{text-decoration:none;margin-left:22px;transition:color .18s}
+  footer a:hover{color:var(--ink-2)}
+  @media(max-width:700px){footer{flex-direction:column;gap:14px;text-align:center}}
 
-  /* ---------- RESPONSIVE ---------- */
-  @media(max-width:820px){
-    nav{padding:18px 22px}
-    .nav-links{display:none}
-    .steps{grid-template-columns:1fr;gap:70px}
-    .route-line,.route-car{display:none}
-    .hw-grid{grid-template-columns:1fr;gap:56px}
-    .roadmap-track{grid-template-columns:1fr;gap:56px}
-    .roadmap-line{display:none}
-    .why-grid{grid-template-columns:1fr;gap:60px}
-    .cost-compare{gap:20px}
-    .veh-compare{gap:22px}
-    .waitlist{flex-direction:column;border:none}
-    .waitlist input{border-right:1.5px solid var(--ink);text-align:center}
-    .waitlist input[name="zip"]{flex:1 1 auto}
-    .waitlist button{justify-content:center;margin-top:10px}
-    footer{flex-direction:column;gap:14px}
-  }
+  /* ---------- REVEAL ---------- */
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+  .rv.in{opacity:1;transform:none}
+
   @media(prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition:none!important}
-    .reveal{opacity:1;transform:none}
+    .rv{opacity:1;transform:none}
   }
 </style>
 </head>
 <body>
 
-<!-- brand mark: a locker grid, not a car -->
-<svg width="0" height="0" style="position:absolute">
-  <defs>
-    <g id="doodle-grid">
-      <rect x="4" y="6" width="56" height="32" rx="3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"></rect>
-      <line x1="24" y1="6" x2="24" y2="38" stroke="currentColor" stroke-width="2"></line>
-      <line x1="44" y1="6" x2="44" y2="38" stroke="currentColor" stroke-width="2"></line>
-      <line x1="4" y1="22" x2="60" y2="22" stroke="currentColor" stroke-width="2"></line>
-      <circle cx="14" cy="30" r="2.2" fill="currentColor"></circle>
-    </g>
-    <!-- small vehicle glyphs, used only to illustrate motion / "what it mounts on" -->
-    <g id="doodle-car">
-      <path d="M8 34 C6 26 10 16 22 13 C30 11 44 10 52 13 C60 15 64 22 65 28 C70 29 72 31 71 34 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
-      <rect x="38" y="17" width="12" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"></rect>
-      <line x1="41.5" y1="17" x2="41.5" y2="27" stroke="currentColor" stroke-width="1.6"></line>
-      <line x1="45.5" y1="17" x2="45.5" y2="27" stroke="currentColor" stroke-width="1.6"></line>
-      <line x1="38" y1="22" x2="50" y2="22" stroke="currentColor" stroke-width="1.6"></line>
-      <circle cx="22" cy="35" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"></circle>
-      <circle cx="22" cy="35" r="1.8" fill="currentColor"></circle>
-      <circle cx="55" cy="35" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"></circle>
-      <circle cx="55" cy="35" r="1.8" fill="currentColor"></circle>
-      <line x1="0" y1="20" x2="7" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-      <line x1="-2" y1="26" x2="6" y2="26" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-      <line x1="1" y1="32" x2="8" y2="32" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-    </g>
-    <g id="doodle-av">
-      <path d="M8 34 C6 26 10 16 22 13 C30 11 44 10 52 13 C60 15 64 22 65 28 C70 29 72 31 71 34 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
-      <path d="M40 13 C40 7 47 7 47 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      <circle cx="43.5" cy="8.5" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
-      <circle cx="22" cy="35" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"></circle>
-      <circle cx="22" cy="35" r="1.8" fill="currentColor"></circle>
-      <circle cx="55" cy="35" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"></circle>
-      <circle cx="55" cy="35" r="1.8" fill="currentColor"></circle>
-    </g>
-  </defs>
-</svg>
-
-<div class="announce"><b>PRIVATE PILOT</b> &nbsp;·&nbsp; NOT YET PUBLICLY AVAILABLE &nbsp;·&nbsp; FIRST STOP: THE BAY AREA</div>
-
-<nav>
-  <a class="nav-logo" href="#top">
-    BOXCAR
-    <svg viewBox="0 0 64 44"><use href="#doodle-grid"></use></svg>
-  </a>
-  <ul class="nav-links">
-    <li><a href="#how">How it Works</a></li>
-    <li><a href="#hardware">The Hardware</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#cities">Cities</a></li>
-    <li><a href="#faq">FAQ</a></li>
-  </ul>
-  <div class="nav-right">
-    <a class="btn" href="#top">Join the Waitlist</a>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 30 20" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="28" height="18" stroke="currentColor" stroke-width="1.6"></rect>
+        <line x1="15" y1="1" x2="15" y2="19" stroke="currentColor" stroke-width="1.2"></line>
+        <line x1="1" y1="10" x2="29" y2="10" stroke="currentColor" stroke-width="1.2"></line>
+        <circle cx="8" cy="14.5" r="1.3" fill="#E0A44C"></circle>
+      </svg>
+      BOXCAR
+    </a>
+    <ul class="navlinks">
+      <li><a href="#gap">The gap</a></li>
+      <li><a href="#grid">The grid</a></li>
+      <li><a href="#economics">Economics</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn" href="#top">Join the waitlist</a>
   </div>
-</nav>
+</div>
 
-<!-- ================= HERO ================= -->
+<!-- ===================== HERO ===================== -->
 <header class="hero" id="top">
-  <div class="pilot-badge">Private pilot · 2026</div>
+  <div class="wrap hero-in">
+    <div>
+      <div class="status"><span class="dot"></span> Private pilot · San Francisco · 2026</div>
 
-  <div class="wordmark">
-    <h1>BOXCAR</h1>
-    <svg class="mark" viewBox="0 0 64 44"><use href="#doodle-grid"></use></svg>
+      <h1>The delivery layer for <em>autonomous cars.</em></h1>
+
+      <p class="sub">Sixteen locked compartments on one route. Every package rides in <b>its own box</b> until the person it belongs to opens it with their phone.</p>
+
+      <form class="waitlist" id="waitlistForm">
+        <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address">
+        <input type="text" name="zip" placeholder="ZIP" inputmode="numeric" maxlength="5" aria-label="ZIP code (optional)">
+        <button class="btn" type="submit">
+          Join
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </button>
+      </form>
+      <p class="wl-note" id="waitlistNote">Founding pricing for early members. One email when we reach your streets.</p>
+
+      <div class="wl-done" id="waitlistSuccess">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        <div>You're on the list.<span>We'll be in touch before the first cars roll.</span></div>
+      </div>
+    </div>
+
+    <div class="rig">
+      <div class="rig-frame">
+        <div class="rig-head">
+          <span>Grid 01 · Mission</span>
+          <span class="live">Loaded</span>
+        </div>
+        <div class="grid16" aria-hidden="true">
+          <span class="cell" style="--i:0"></span><span class="cell" style="--i:1"></span>
+          <span class="cell" style="--i:2"></span><span class="cell" style="--i:3"></span>
+          <span class="cell" style="--i:4"></span><span class="cell open" style="--i:5"></span>
+          <span class="cell" style="--i:6"></span><span class="cell" style="--i:7"></span>
+          <span class="cell" style="--i:8"></span><span class="cell" style="--i:9"></span>
+          <span class="cell" style="--i:10"></span><span class="cell" style="--i:11"></span>
+          <span class="cell" style="--i:12"></span><span class="cell" style="--i:13"></span>
+          <span class="cell" style="--i:14"></span><span class="cell" style="--i:15"></span>
+        </div>
+        <div class="rig-foot">
+          <span><b>16</b> compartments</span>
+          <span><b>1</b> route</span>
+          <span><b>1</b> door opens</span>
+        </div>
+      </div>
+      <p class="rig-cap">One grid, mid-route. Fifteen doors stay shut. The sixteenth opens for the phone it was assigned to.</p>
+    </div>
   </div>
-  <div class="tagline">THE DELIVERY LAYER FOR AUTONOMOUS CARS</div>
-
-  <p class="hero-sub">A grid of <b>locked, temperature-controlled compartments</b> that mounts onto any vehicle — a van today, a licensed autonomous car tomorrow. Local businesses load it, we batch up to sixteen deliveries onto one route, and each recipient unlocks their own compartment with a tap of their phone.</p>
-
-  <form class="waitlist" id="waitlistForm">
-    <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address">
-    <input type="text" name="zip" placeholder="ZIP (optional)" inputmode="numeric" maxlength="5" aria-label="ZIP code (optional)">
-    <button class="btn" type="submit">
-      Join the Waitlist
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-    </button>
-  </form>
-  <p class="waitlist-note" id="waitlistNote">Early members get founding pricing. No spam, one email when we launch near you.</p>
-
-  <div class="waitlist-success" id="waitlistSuccess">
-    <svg viewBox="0 0 48 48" fill="none" stroke="#1B1B1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="24" cy="24" r="20"></circle><path d="M15 24.5 21 30 33 18"></path>
-    </svg>
-    <p>You're on the list.</p>
-    <span>We'll email you when Boxcar reaches your streets.</span>
-  </div>
-
-  <div class="trust">
-    <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path></svg>Locked &amp; insured</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"></rect><line x1="10" y1="18" x2="14" y2="18"></line></svg>Unlocks with your phone</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"></rect><path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path></svg>Runs on any vehicle</span>
-  </div>
-
-  <div class="scroll-hint" aria-hidden="true"></div>
 </header>
 
-<!-- ================= HOW IT WORKS ================= -->
-<section id="how">
-  <div class="section-inner">
-    <p class="eyebrow reveal">How it works</p>
-    <h2 class="section-title reveal">Three steps. No couriers.</h2>
-
-    <div class="steps reveal">
-      <div class="route-line" aria-hidden="true"></div>
-      <svg class="route-car" id="routeCar" viewBox="-4 4 80 44" aria-hidden="true"><use href="#doodle-car"></use></svg>
-
-      <div class="step">
-        <div class="step-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="#1B1B1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="6" y="10" width="36" height="30" rx="2"></rect>
-            <line x1="6" y1="20" x2="42" y2="20"></line><line x1="6" y1="30" x2="42" y2="30"></line>
-            <line x1="18" y1="10" x2="18" y2="40"></line><line x1="30" y1="10" x2="30" y2="40"></line>
-            <rect x="20.5" y="22.5" width="7" height="5" fill="#1B1B1A" stroke="none"></rect>
-          </svg>
+<!-- ===================== THE GAP ===================== -->
+<section id="gap">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label rv">01 — The gap</p>
+      <div>
+        <h2 class="display rv">Autonomy solved the driving. Nobody solved the handoff.</h2>
+        <div class="gap-copy rv">
+          <p class="body-copy">A robotaxi can already find your address and pull up to the curb. What it can't do is ring the doorbell, hand over a bag, or stop the wrong person from walking off with your order. Every autonomous delivery pitch quietly runs aground on that last thirty feet.</p>
+          <p class="body-copy">Boxcar builds the part that's missing: <b>a grid of locked, temperature-controlled compartments</b> that bolts onto whatever's driving. Not a vehicle — the layer between the vehicle and the person waiting for the box.</p>
         </div>
-        <h3>DROP IT</h3>
-        <p>A local business loads your package into an open compartment on the nearest Boxcar grid. It locks itself.</p>
-      </div>
-
-      <div class="step">
-        <div class="step-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="#1B1B1A" stroke-width="1.8" stroke-linecap="round">
-            <circle cx="9" cy="38" r="3.5"></circle>
-            <circle cx="39" cy="10" r="3.5"></circle>
-            <path d="M12 35 C22 28 20 22 26 18 C30 15 33 14 36 12" stroke-dasharray="4 5"></path>
-          </svg>
-        </div>
-        <h3>IT RIDES</h3>
-        <p>The grid batches up to sixteen deliveries onto one optimized route — today behind a human driver, and eventually behind no one at all.</p>
-      </div>
-
-      <div class="step">
-        <div class="step-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="#1B1B1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="15" y="6" width="18" height="36" rx="3"></rect>
-            <line x1="21" y1="38" x2="27" y2="38"></line>
-            <rect x="20" y="19" width="8" height="7" rx="1"></rect>
-            <path d="M22 19v-2.5a2 2 0 0 1 4 0"></path>
-          </svg>
-        </div>
-        <h3>THEY UNLOCK</h3>
-        <p>Your recipient taps their phone at the curb. Their door opens. Only theirs.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= THE HARDWARE ================= -->
-<section class="car-section" id="hardware">
-  <div class="section-inner">
-    <p class="eyebrow reveal">The hardware</p>
-    <h2 class="section-title reveal">We don't build cars.<br>We build the grid.</h2>
-
-    <div class="locker-wrap reveal">
-      <svg class="locker-svg" viewBox="60 60 440 230" fill="none" aria-label="Line drawing of the Boxcar locker grid: a modular case of eight individually locked compartments">
-        <rect x="90" y="90" width="380" height="170" rx="14" stroke="#1B1B1A" stroke-width="3"></rect>
-        <circle cx="102" cy="102" r="4.5" fill="none" stroke="#1B1B1A" stroke-width="2"></circle>
-        <circle cx="458" cy="102" r="4.5" fill="none" stroke="#1B1B1A" stroke-width="2"></circle>
-        <circle cx="102" cy="248" r="4.5" fill="none" stroke="#1B1B1A" stroke-width="2"></circle>
-        <circle cx="458" cy="248" r="4.5" fill="none" stroke="#1B1B1A" stroke-width="2"></circle>
-        <g stroke="#1B1B1A" stroke-width="2.2">
-          <rect x="120" y="120" width="320" height="110" rx="4"></rect>
-          <line x1="200" y1="120" x2="200" y2="230"></line>
-          <line x1="280" y1="120" x2="280" y2="230"></line>
-          <line x1="360" y1="120" x2="360" y2="230"></line>
-          <line x1="120" y1="175" x2="440" y2="175"></line>
-        </g>
-        <g fill="#F4F4F2">
-          <rect class="locker-door" x="124" y="124" width="72" height="47"></rect>
-          <rect class="locker-door" x="204" y="124" width="72" height="47"></rect>
-          <rect class="locker-door" x="284" y="124" width="72" height="47"></rect>
-          <rect class="locker-door" x="364" y="124" width="72" height="47"></rect>
-          <rect class="locker-door" x="124" y="179" width="72" height="47"></rect>
-          <rect class="locker-door" x="204" y="179" width="72" height="47"></rect>
-          <rect class="locker-door" x="284" y="179" width="72" height="47"></rect>
-          <rect class="locker-door" x="364" y="179" width="72" height="47"></rect>
-        </g>
-        <g stroke="#1B1B1A" stroke-width="2" stroke-linecap="round" pointer-events="none">
-          <line x1="182" y1="147" x2="190" y2="147"></line><line x1="262" y1="147" x2="270" y2="147"></line>
-          <line x1="342" y1="147" x2="350" y2="147"></line><line x1="422" y1="147" x2="430" y2="147"></line>
-          <line x1="182" y1="202" x2="190" y2="202"></line><line x1="262" y1="202" x2="270" y2="202"></line>
-          <line x1="342" y1="202" x2="350" y2="202"></line><line x1="422" y1="202" x2="430" y2="202"></line>
-        </g>
-      </svg>
-    </div>
-    <p class="locker-caption reveal">Every compartment locks independently and unlocks only for the recipient it's assigned to. <b>Hover a door</b> — that's the one only your recipient can open. The case bolts onto a vehicle; it isn't one.</p>
-
-    <div class="veh-compare reveal">
-      <div class="veh-item">
-        <svg class="veh-icon" viewBox="-4 4 80 44"><use href="#doodle-car"></use></svg>
-        <span class="veh-label">Today<b>Human-driven</b></span>
-      </div>
-      <div class="veh-arrow" aria-hidden="true">→</div>
-      <div class="veh-item">
-        <svg class="veh-icon" viewBox="-4 4 80 44"><use href="#doodle-av"></use></svg>
-        <span class="veh-label">Soon<b>Autonomous</b></span>
+<!-- ===================== THE GRID ===================== -->
+<section id="grid">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label rv">02 — The grid</p>
+      <div>
+        <h2 class="display rv">We don't build cars. We build the box.</h2>
+        <p class="lede rv">Nuro spent more than $2B building its own delivery vehicles before pivoting to licensing. We started where that ended: the hardware is the product, and it doesn't care what's underneath it.</p>
       </div>
     </div>
-    <p class="hw-note reveal">Same grid, same locks, same unlock. Only the vehicle underneath — and eventually, the driver — changes.</p>
 
-    <div class="hw-grid reveal">
-      <div class="hw-copy">
-        <p>Nuro spent more than $2 billion building its own delivery vehicles, then pivoted to licensing its self-driving stack instead. We started where they landed: Boxcar doesn't manufacture cars. We manufacture the compartments — <b>steel, individually locked, temperature-controlled, sensor-monitored</b> — that mount onto whatever's driving.</p>
-        <p>Right now, that's a trained human in a van. As licensed autonomous vehicles come online, the same grid bolts onto those instead — no redesign, no new hardware, no change to how a recipient unlocks their box. Just one fewer person in the front seat, and a lower price because of it.</p>
+    <div class="specs rv">
+      <div class="spec">
+        <span class="spec-n">/ 01</span>
+        <span class="spec-t">Sixteen locked doors</span>
+        <span class="spec-d">Steel compartments, each with its own electronic latch. One delivery per box, assigned end to end — never pooled, never handled by a stranger.</span>
       </div>
-      <div class="hw-copy">
-        <p>AV companies can drive a car to your curb. None of them can ring your doorbell, hand you a bag, or stop a stranger from walking off with someone else's order. That's the piece that's still missing — and it's the piece we build.</p>
-        <p>Because the grid doesn't care what it's bolted to, our network grows with every van on the road today, and every autonomous vehicle that reaches it tomorrow.</p>
+      <div class="spec">
+        <span class="spec-n">/ 02</span>
+        <span class="spec-t">Opens for one phone</span>
+        <span class="spec-d">The recipient taps a link or scans the QR on their door at the curb. Their compartment opens. No app to download, and every unlock is logged to a specific device.</span>
+      </div>
+      <div class="spec">
+        <span class="spec-n">/ 03</span>
+        <span class="spec-t">Temperature-controlled</span>
+        <span class="spec-d">Active cooling per compartment, so the same grid moves documents, electronics, and anything that can't sit warm in a trunk across town.</span>
+      </div>
+      <div class="spec">
+        <span class="spec-n">/ 04</span>
+        <span class="spec-t">Vehicle-agnostic by design</span>
+        <span class="spec-d">It mounts to a van today. It mounts to a licensed autonomous car tomorrow. Same steel, same latches, same unlock — the network grows with every vehicle that can carry it.</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= ROADMAP ================= -->
-<section id="roadmap">
-  <div class="section-inner">
-    <p class="eyebrow reveal">Roadmap</p>
-    <h2 class="section-title reveal">Human drivers first.<br>Autonomous cars next.</h2>
-    <p class="section-lede reveal">We're not waiting on self-driving cars to exist before Boxcar works. We're building the batching network now, with people behind the wheel — so it's already running the day the driver isn't needed.</p>
-
-    <div class="roadmap-track reveal">
-      <div class="roadmap-line" aria-hidden="true"></div>
-      <div class="rm-stage">
-        <div class="rm-marker">1</div>
-        <h3>HUMAN-DRIVEN PILOT</h3>
-        <span class="rm-when">Fall 2026 · Bay Area</span>
-        <p>Trained Boxcar drivers run every route in vans fitted with our compartment grid, starting with a small group of local businesses.</p>
-      </div>
-      <div class="rm-stage">
-        <div class="rm-marker">2</div>
-        <h3>AUTONOMOUS INTEGRATION</h3>
-        <span class="rm-when">As AVs come online</span>
-        <p>The same grid mounts onto licensed autonomous vehicles as they reach the market and the regulatory path clears for unsupervised routes — no hardware redesign required.</p>
-      </div>
-      <div class="rm-stage">
-        <div class="rm-marker">3</div>
-        <h3>COST DROPS. NOTHING ELSE DOES.</h3>
-        <span class="rm-when">At scale</span>
-        <p>Removing the driver removes most of the cost of every delivery. Same locks, same unlock, same batching — just cheaper.</p>
+<!-- ===================== ECONOMICS ===================== -->
+<section id="economics">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label rv">03 — Economics</p>
+      <div>
+        <h2 class="display rv">Batching is the whole business.</h2>
+        <p class="lede rv">Every courier app moves one bag per trip, which is why sending something across town costs more than the thing you're sending. Sixteen packages sharing one optimized route changes that math immediately — and changes it again when the driver goes away.</p>
       </div>
     </div>
 
-    <div class="cost-compare reveal">
-      <div class="cost-item"><strong>$3–4</strong><span>cost per delivery today, human-driven</span></div>
-      <div class="cost-arrow" aria-hidden="true">→</div>
-      <div class="cost-item"><strong>&lt;$1</strong><span>projected cost per delivery, once autonomous</span></div>
+    <div class="arc rv">
+      <div class="arc-card">
+        <span class="arc-when">Now — human-driven</span>
+        <p class="arc-t">Drivers run the routes.</p>
+        <p class="arc-p">Trained Boxcar drivers in vans fitted with the grid, batching sixteen drops per run across the Bay Area. The network is real and earning before a single robotaxi is involved.</p>
+        <div class="arc-cost"><strong>$3–4</strong><span>per delivery</span></div>
+      </div>
+      <div class="arc-mid">→</div>
+      <div class="arc-card next">
+        <span class="arc-when">Next — driverless</span>
+        <p class="arc-t">The seat empties.</p>
+        <p class="arc-p">The same grid bolts onto licensed autonomous vehicles as they come online. No redesign, no new hardware, no change to how anyone opens their box.</p>
+        <div class="arc-cost"><strong>&lt;$1</strong><span>per delivery</span></div>
+      </div>
     </div>
-  </div>
-</section>
 
-<!-- ================= WHY ================= -->
-<section id="why">
-  <div class="section-inner">
-    <p class="eyebrow reveal">Why boxcar</p>
-    <h2 class="section-title reveal">Couriers carry one bag.<br>A Boxcar grid carries a neighborhood.</h2>
+    <p class="arc-note rv">The driver was the one cost we could never batch away. <b>Boxcar is built so that when it disappears, nothing about the product changes — only the price.</b> That's why we're building the network now instead of waiting for the cars.</p>
 
-    <div class="why-grid reveal">
-      <div class="why-copy">
-        <p>Every delivery app works the same way: one person, one bag, one trip. That's why sending anything across town costs more than the thing you're sending.</p>
-        <p>Boxcar batches. <b>Sixteen packages share one route</b>, and each rides in its own locked compartment until its owner taps their phone at the curb.</p>
-        <p>Fewer trips. Fewer cars on the road. A price that finally makes sense.</p>
-      </div>
-      <div class="why-stats">
-        <div class="why-stat"><strong>16×</strong><span>deliveries per trip vs. a single courier run</span></div>
-        <div class="why-stat"><strong>1</strong><span>optimized route across the whole metro</span></div>
-        <div class="why-stat"><strong>0</strong><span>strangers handling your package door-to-door</span></div>
-        <div class="why-stat"><strong>10</strong><span>Bay Area businesses already piloting Boxcar</span></div>
-      </div>
+    <div class="nums rv">
+      <div class="num"><strong>16×</strong><span>deliveries per trip against a single courier run</span></div>
+      <div class="num"><strong>10</strong><span>Bay Area businesses committed to the pilot</span></div>
+      <div class="num"><strong>0</strong><span>strangers touching your package door to door</span></div>
     </div>
   </div>
 </section>
 
-<!-- ================= CITIES ================= -->
-<section class="car-section" id="cities">
-  <div class="section-inner">
-    <p class="eyebrow reveal">Cities</p>
-    <h2 class="section-title reveal">Where we're headed</h2>
-
-    <div class="cities reveal">
-      <div class="city first">
-        <span class="city-name">SAN FRANCISCO</span>
-        <span class="city-status">First stop · 2026</span>
-      </div>
-      <div class="city">
-        <span class="city-name">EAST BAY</span>
-        <span class="city-status">Next</span>
-      </div>
-      <div class="city">
-        <span class="city-name">SOUTH BAY</span>
-        <span class="city-status">Next</span>
-      </div>
-      <div class="city">
-        <span class="city-name">YOUR CITY</span>
-        <span class="city-status">You tell us</span>
+<!-- ===================== CITIES ===================== -->
+<section id="cities">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label rv">04 — Coverage</p>
+      <div>
+        <h2 class="display rv">San Francisco first.</h2>
+        <p class="lede rv">We're starting where autonomy is furthest along and where we already know the businesses. Waitlist zip codes decide what comes after.</p>
       </div>
     </div>
-    <p class="cities-note reveal">Waitlist signups decide where Boxcar goes next. <a href="#top">Cast your vote with your zip code.</a></p>
+    <div class="cities rv">
+      <div class="city up"><span class="city-n">San Francisco</span><span class="city-s">Pilot · 2026</span></div>
+      <div class="city"><span class="city-n">East Bay</span><span class="city-s">Next</span></div>
+      <div class="city"><span class="city-n">South Bay</span><span class="city-s">Next</span></div>
+      <div class="city"><span class="city-n">Your city</span><span class="city-s">You tell us</span></div>
+    </div>
   </div>
 </section>
 
-<!-- ================= FAQ ================= -->
+<!-- ===================== FAQ ===================== -->
 <section id="faq">
-  <div class="section-inner">
-    <p class="eyebrow reveal">FAQ</p>
-    <h2 class="section-title reveal">Questions, answered.</h2>
-
-    <div class="faq-list reveal">
-      <div class="faq">
-        <button type="button">Is Boxcar a car company?<span class="plus"></span></button>
-        <div class="faq-a"><p>No. We don't build vehicles — Nuro spent over $2B doing that before pivoting to licensing instead. We build the grid: locked, temperature-controlled compartments that mount onto whatever's driving. Today that's a human in a van. Soon it's a licensed autonomous vehicle. Same hardware, either way.</p></div>
-      </div>
-      <div class="faq">
-        <button type="button">When can I use Boxcar?<span class="plus"></span></button>
-        <div class="faq-a"><p>Piloting begins this fall in the Bay Area, starting with a small group of local businesses, then expanding to waitlist members neighborhood by neighborhood as cars come online. Joining the waitlist is currently the only way in.</p></div>
-      </div>
-      <div class="faq">
-        <button type="button">How does the unlock actually work?<span class="plus"></span></button>
-        <div class="faq-a"><p>When your package arrives, you get a notification with the car's curb location. Walk up, tap the unlock button in your browser or scan the QR on your door — your compartment opens, and only yours. No app download required for recipients.</p></div>
-      </div>
-      <div class="faq">
-        <button type="button">What can I send?<span class="plus"></span></button>
-        <div class="faq-a"><p>Anything that fits a compartment and weighs under 40 lbs — documents, clothes, electronics, keys, gifts, forgotten chargers. No perishables, liquids, or anything illegal or hazardous. Full list at launch.</p></div>
-      </div>
-      <div class="faq">
-        <button type="button">Is my package safe in there?<span class="plus"></span></button>
-        <div class="faq-a"><p>Each compartment is steel, individually locked, and sensor-monitored from drop to pickup. Every delivery is insured in transit, and every door open is logged to a specific phone.</p></div>
-      </div>
-      <div class="faq">
-        <button type="button">Who's driving?<span class="plus"></span></button>
-        <div class="faq-a"><p>Trained Boxcar drivers, for now — the same team running the pilot vans in the Bay Area. The compartment grid is built to bolt onto licensed autonomous vehicles the moment they're available and permitted, with no changes to the locks or the unlock flow. When the driver goes away, so does most of the cost.</p></div>
-      </div>
-      <div class="faq">
-        <button type="button">What will it cost?<span class="plus"></span></button>
-        <div class="faq-a"><p>Batching is the whole point: our target is under $4 per delivery to start — a fraction of the $10+ average cost of urban last-mile delivery today — and it drops further once routes go driverless. Founding waitlist members lock in launch pricing for a year.</p></div>
-      </div>
-      <div class="faq">
-        <button type="button">Who's behind Boxcar?<span class="plus"></span></button>
-        <div class="faq-a"><p>Boxcar comes out of Lemonhat, a batched farm-to-door delivery company that hit $6M in lifetime revenue before being acquired in December 2025. Drivers were the one cost we could never batch away — Boxcar exists to fix that.</p></div>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label rv">05 — Questions</p>
+      <div style="width:100%">
+        <h2 class="display rv">The short answers.</h2>
+        <div class="faqs rv">
+          <div class="faq">
+            <button type="button">So is Boxcar a car company?<span class="pm"></span></button>
+            <div class="faq-a"><p>No. We build the compartment grid — the locked, temperature-controlled hardware that mounts onto a vehicle. Today that vehicle is a van with a driver in it. Tomorrow it's a licensed autonomous car. The box is the product either way.</p></div>
+          </div>
+          <div class="faq">
+            <button type="button">How does the unlock work?<span class="pm"></span></button>
+            <div class="faq-a"><p>When the grid reaches your curb you get a notification with its location. Tap the link or scan the QR on your door and your compartment opens — only yours. Recipients never download anything.</p></div>
+          </div>
+          <div class="faq">
+            <button type="button">Who's driving right now?<span class="pm"></span></button>
+            <div class="faq-a"><p>Trained Boxcar drivers running the Bay Area pilot. We're not betting the launch on autonomy arriving — the batching economics work with a human in the seat, and improve sharply when the seat is empty.</p></div>
+          </div>
+          <div class="faq">
+            <button type="button">What can I send?<span class="pm"></span></button>
+            <div class="faq-a"><p>Anything that fits a compartment and stays under 40 lbs — documents, clothes, electronics, keys, gifts, the charger you left at home. No liquids, hazardous goods, or anything illegal.</p></div>
+          </div>
+          <div class="faq">
+            <button type="button">Who's behind it?<span class="pm"></span></button>
+            <div class="faq-a"><p>Boxcar comes out of Lemonhat, a batched farm-to-door delivery company that reached $6M in lifetime revenue before being acquired in December 2025. Drivers were the one cost we could never batch away. This is the fix.</p></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= FINAL CTA ================= -->
-<section class="final">
-  <div class="wordmark-sm reveal">BOXCAR</div>
-  <p class="reveal">Your package has somewhere to be. Let it ride.</p>
-  <form class="waitlist reveal" id="waitlistForm2">
-    <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address">
-    <input type="text" name="zip" placeholder="ZIP (optional)" inputmode="numeric" maxlength="5" aria-label="ZIP code (optional)">
-    <button class="btn" type="submit">
-      Join the Waitlist
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-    </button>
-  </form>
-  <p class="waitlist-note reveal">Early members get founding pricing.</p>
+<!-- ===================== CLOSER ===================== -->
+<section class="closer">
+  <div class="wrap">
+    <h2 class="rv">Sixteen boxes, one route, and nobody's hands but yours.</h2>
+    <form class="waitlist rv" id="waitlistForm2">
+      <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address">
+      <input type="text" name="zip" placeholder="ZIP" inputmode="numeric" maxlength="5" aria-label="ZIP code (optional)">
+      <button class="btn" type="submit">
+        Join
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+      </button>
+    </form>
+    <p class="wl-note rv">Founding pricing for early members.</p>
+  </div>
 </section>
 
-<footer>
-  <span>© 2026 BOXCAR · Private pilot — not yet publicly available</span>
-  <span>
-    <a href="#faq">FAQ</a><a href="mailto:hello@boxcar.today">Contact</a>
-  </span>
-</footer>
+<div class="wrap">
+  <footer>
+    <span>© 2026 Boxcar · Private pilot — not yet publicly available</span>
+    <span><a href="#faq">FAQ</a><a href="mailto:hello@boxcar.today">Contact</a></span>
+  </footer>
+</div>
 
 <script>
-  // scroll reveals
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
-  },{threshold:.15});
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-  // route car scroll animation
-  const car = document.getElementById('routeCar');
-  const steps = document.querySelector('.steps');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(car && steps && !reduced){
-    addEventListener('scroll', ()=>{
-      const r = steps.getBoundingClientRect();
-      const vh = innerHeight;
-      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height*0.6)));
-      car.style.left = (10 + p*74) + '%';
-    },{passive:true});
-  }
+  // reveal on scroll
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
   // FAQ accordion
   document.querySelectorAll('.faq button').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
+    btn.addEventListener('click',()=>{
       const faq = btn.parentElement;
       const ans = faq.querySelector('.faq-a');
       const open = faq.classList.toggle('open');
@@ -790,26 +620,25 @@
       const email = form.querySelector('input[type="email"]').value;
       const zipEl = form.querySelector('input[name="zip"]');
       const zip = zipEl && zipEl.value.trim() ? zipEl.value.trim() : null;
-      const submitBtn = form.querySelector('button');
-      submitBtn.disabled = true;
+      form.querySelector('button').disabled = true;
 
       fetch(SUPABASE_URL + '/rest/v1/boxcar_waitlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'Prefer': 'return=minimal'
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':SUPABASE_KEY,
+          'Authorization':'Bearer ' + SUPABASE_KEY,
+          'Prefer':'return=minimal'
         },
         body: JSON.stringify({ email, zip_code: zip })
-      }).catch(err => console.error('waitlist submit failed', err));
+      }).catch(err=>console.error('waitlist submit failed', err));
 
       if(formId === 'waitlistForm'){
         form.style.display = 'none';
         document.getElementById('waitlistNote').style.display = 'none';
         document.getElementById('waitlistSuccess').style.display = 'flex';
       } else {
-        form.innerHTML = '<p style="font-size:16px;font-weight:300;width:100%;text-align:center">You\'re on the list. We\'ll be in touch.</p>';
+        form.outerHTML = '<p style="font-size:15px;color:#8E8C86;margin-top:38px">You\'re on the list. We\'ll be in touch.</p>';
       }
     });
   }
