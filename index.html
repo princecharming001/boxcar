@@ -2,10 +2,10 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Boxcar — One car. Sixteen locked boxes.</title>
-<meta name="description" content="Boxcar fits a grid of locked compartments to a delivery car. One route serves a whole neighborhood, and your package stays sealed until you tap it open at the curb. Private pilot in San Francisco.">
-<meta property="og:title" content="Boxcar — One car. Sixteen locked boxes.">
-<meta property="og:description" content="One route serves a whole neighborhood. Your package stays sealed until you tap it open at the curb.">
+<title>Boxcar — One car. A grid of locked boxes.</title>
+<meta name="description" content="Boxcar fits a grid of locked compartments to a delivery car. The boxes resize and stack to match whatever is riding, and your package stays sealed until you tap it open at the curb. Private pilot in San Francisco.">
+<meta property="og:title" content="Boxcar — One car. A grid of locked boxes.">
+<meta property="og:description" content="Compartments resize and stack to match the load. Your package stays sealed until you tap it open at the curb.">
 <style>
   :root{
     /* ink: three values only */
@@ -159,7 +159,7 @@
     .signup button{flex:1 1 auto;text-align:center}
   }
 
-  /* ---------- the rig (16-box visual) ---------- */
+  /* ---------- the rig (modular compartment grid) ---------- */
   .rig{border:1px solid var(--ink)}
   .rig-head{
     display:flex;justify-content:space-between;align-items:center;
@@ -167,15 +167,27 @@
     font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--ink-3);
   }
+  .configs{display:flex;border-bottom:1px solid var(--ink)}
+  .configs button{
+    flex:1;background:none;border:none;cursor:pointer;
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ink-3);padding:11px 4px;
+    transition:color 160ms ease-out,background 160ms ease-out;
+  }
+  .configs button + button{border-left:1px solid var(--rule)}
+  .configs button:hover{color:var(--ink)}
+  .configs button.on{background:var(--ink);color:var(--paper)}
   .boxes{
     display:grid;grid-template-columns:repeat(4,1fr);
+    grid-auto-rows:clamp(13px,1.6vw,19px);
     background:var(--rule);gap:1px;padding:1px;
   }
   .box{
-    aspect-ratio:1.3/1;background:var(--paper);
+    background:var(--paper);position:relative;
     display:flex;align-items:center;justify-content:center;
-    position:relative;
+    animation:drop 240ms ease-out both;
   }
+  @keyframes drop{from{opacity:0}to{opacity:1}}
   .box::after{
     content:"";width:12px;height:1px;background:var(--rule);
   }
@@ -185,6 +197,12 @@
     border-left:1.5px solid var(--paper);border-bottom:1.5px solid var(--paper);
     transform:rotate(-45deg) translate(1px,-2px);
   }
+  .box .tag{
+    position:absolute;left:6px;bottom:4px;font-style:normal;
+    font-family:var(--mono);font-size:8px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink-3);
+  }
+  .box.mine .tag{color:rgba(255,255,255,.55)}
   .rig-foot{
     display:flex;border-top:1px solid var(--ink);
   }
@@ -340,8 +358,8 @@
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <span class="stage">Private pilot — San Francisco</span>
-      <h1>One car. Sixteen locked boxes. Only yours opens.</h1>
-      <p class="lead">Boxcar fits a grid of locked compartments to a delivery car. One route serves a whole neighborhood, and your package stays sealed until you open it at the curb.</p>
+      <h1>One car. A grid of locked boxes. Only yours opens.</h1>
+      <p class="lead">Boxcar fits a grid of locked compartments to a delivery car. The boxes resize and stack to match whatever is riding, and yours stays sealed until you open it at the curb.</p>
 
       <form class="signup" id="form1">
         <input type="email" name="email" placeholder="you@email.com" required aria-label="Email address">
@@ -359,21 +377,22 @@
       <div class="rig">
         <div class="rig-head">
           <span>Route 01</span>
-          <span>Loaded</span>
+          <span id="rigMode">Mixed load</span>
         </div>
-        <div class="boxes" aria-hidden="true">
-          <span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span>
-          <span class="box"></span><span class="box mine"></span><span class="box"></span><span class="box"></span>
-          <span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span>
-          <span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span>
+        <div class="configs" role="group" aria-label="Compartment configuration">
+          <button type="button" data-cfg="mixed" class="on">Mixed</button>
+          <button type="button" data-cfg="documents">Documents</button>
+          <button type="button" data-cfg="parcels">Parcels</button>
+          <button type="button" data-cfg="groceries">Cold</button>
         </div>
+        <div class="boxes" id="boxes" aria-hidden="true"></div>
         <div class="rig-foot">
-          <div><b>16</b>Compartments</div>
+          <div><b id="cCount">14</b>Compartments</div>
           <div><b>1</b>Route</div>
           <div><b>1</b>Door for you</div>
         </div>
       </div>
-      <p class="fine rig-cap">Every other door stays shut. Yours opens for the phone it was assigned to.</p>
+      <p class="fine rig-cap">Same rail, different boxes. Switch the load and the grid is built to fit it — every door stays shut but the one assigned to your phone.</p>
     </div>
   </div>
 </header>
@@ -426,13 +445,14 @@
     <p class="label sec-label rv">03 — The box</p>
     <div class="sec-body">
       <h2 class="rv">We don't build the car. We build the box.</h2>
-      <p class="body rv" style="margin-top:var(--s3)">Boxcar is hardware: a grid of steel compartments that mounts to a vehicle. It's the part of delivery that nobody has built yet — the piece between a car arriving and a package actually reaching the right person.</p>
+      <p class="body rv" style="margin-top:var(--s3)">Boxcar is hardware: a rail of steel compartments that mounts to a vehicle. It's the part of delivery that nobody has built yet — the piece between a car arriving and a package actually reaching the right person.</p>
+      <p class="body rv" style="margin-top:var(--s3)">The grid isn't one fixed shape. Compartments come in different depths and stack together on the same rail, so a car running document racks in the morning can run cold boxes in the afternoon.</p>
 
       <dl class="specs rv">
-        <div class="spec"><dt>Sixteen compartments</dt><dd>Steel, each with its own electronic latch. One delivery per box.</dd></div>
+        <div class="spec"><dt>Modular compartments</dt><dd>Slot depth changes with the load — thin racks for documents, deep boxes for groceries — and they stack on one rail. Capacity follows the mix.</dd></div>
         <div class="spec"><dt>One recipient per door</dt><dd>Your compartment is assigned when the package goes in and stays assigned until you open it.</dd></div>
         <div class="spec"><dt>Opens with your phone</dt><dd>A tap or a scan at the curb. No app, no code to remember, and every open is logged.</dd></div>
-        <div class="spec"><dt>Temperature controlled</dt><dd>Each compartment is cooled independently, so groceries and cold items ride the same route as everything else.</dd></div>
+        <div class="spec"><dt>Cold where it's needed</dt><dd>Cooled compartments sit on the same rail as ambient ones, so groceries ride the route alongside everything else.</dd></div>
         <div class="spec"><dt>Sealed end to end</dt><dd>Nobody's hands touch your package between the sender loading it and you opening it.</dd></div>
       </dl>
     </div>
@@ -491,7 +511,7 @@
         </div>
         <div class="faq">
           <button type="button">What can I send?<span class="sign"></span></button>
-          <div class="faq-a"><p>Anything that fits a compartment and stays under 40 lbs — documents, clothes, electronics, keys, groceries, the charger you left at a friend's place. No liquids in bulk, nothing hazardous, nothing illegal.</p></div>
+          <div class="faq-a"><p>Anything that fits a compartment and stays under 40 lbs — documents, clothes, electronics, keys, groceries, the charger you left at a friend's place. Compartment sizes are matched to the run, so a document rack and a cold box can ride the same car. No liquids in bulk, nothing hazardous, nothing illegal.</p></div>
         </div>
         <div class="faq">
           <button type="button">What will it cost?<span class="sign"></span></button>
@@ -534,6 +554,43 @@
 </footer>
 
 <script>
+  // ---- modular compartment grid ----
+  function rep(n,w,h,tag){var a=[];for(var i=0;i<n;i++){a.push({w:w,h:h,tag:tag});}return a;}
+  var CFG = {
+    mixed:     {label:'Mixed load',    mine:4, cells:rep(2,2,4,'cold').concat(rep(4,2,2),rep(8,2,1))},
+    documents: {label:'Document rack', mine:9, cells:rep(24,2,1)},
+    parcels:   {label:'Parcel boxes',  mine:5, cells:rep(12,2,2)},
+    groceries: {label:'Cold boxes',    mine:3, cells:rep(6,2,4,'cold')}
+  };
+  function drawGrid(key){
+    var c = CFG[key], host = document.getElementById('boxes');
+    if(!host) return;
+    host.innerHTML = '';
+    c.cells.forEach(function(cell,i){
+      var el = document.createElement('span');
+      el.className = 'box' + (i===c.mine ? ' mine' : '');
+      el.style.gridColumn = 'span ' + cell.w;
+      el.style.gridRow = 'span ' + cell.h;
+      el.style.animationDelay = Math.min(i*12,240) + 'ms';
+      if(cell.tag){
+        var t = document.createElement('i');
+        t.className = 'tag'; t.textContent = cell.tag;
+        el.appendChild(t);
+      }
+      host.appendChild(el);
+    });
+    document.getElementById('cCount').textContent = c.cells.length;
+    document.getElementById('rigMode').textContent = c.label;
+  }
+  document.querySelectorAll('.configs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.configs button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      drawGrid(b.getAttribute('data-cfg'));
+    });
+  });
+  drawGrid('mixed');
+
   // reveal: opacity + 16px rise, once, ~15% threshold
   var io = new IntersectionObserver(function(es){
     es.forEach(function(e){
